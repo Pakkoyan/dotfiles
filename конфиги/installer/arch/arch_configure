@@ -1,0 +1,66 @@
+-->ВСЕ ПАКЕТЫ<--
+    sudo pacman -Syu alacritty syncthing lsd bat pipewire pipewire-alsa pipewire-pulse
+    pipewire-jack wireplumber base-devel bspwm sxhkd git zsh grub efibootmgr neofetch
+    ttf-jetbrains-mono-nerd firefox polybar firefox wget curl
+
+  
+-->НАСТРОЙКА ZSH<--
+
+    Установка oh my zsh
+    и переключение на него
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting & git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions & git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+    
+    Перходим в .zshrc находим тему и ставим
+        ZSH_THEME="powerlevel10k/powerlevel10k"
+    
+    так же дополняем плагинами 
+        plugins=(git zsh-syntax-highlighting zsh-autosuggestions)
+
+
+-->Syncthing<--
+    Создание сервисов в user
+        mkdir ~/.config/systemd/user
+
+    Копирование сервиса в user
+        cp /usr/lib/systemd/user/syncthing.service ~/.config/systemd/user/ 
+    
+    Автозапуск
+        systemctl --user enable syncthing.service
+
+    Запуск 
+        systemctl --user start syncthing.service
+
+    Проверка 
+        systemctl --user status syncthing.service
+
+    Открыть Syncthing
+        По адресу в поисковике http://127.0.0.1:8384
+
+
+-->PipeWire<--
+    PipeWire - это общий сервер звука который обьеденяет все серверы звука такие как 
+    
+    ALSA - Базовая архитектура доступа звука в линуксе, чаще всего оборачивается 
+    более высокоyровневыми api по типу JACK & PulseAudio
+
+    JACK - Разработан для профессионального аудио, дает низкую задержку и надежность
+    
+    PulseAudio - (Надо перезапустить!), самый популярный звуковой сервис
+
+    Конструкция
+        Приложение (может использовать ALSA/PulseAudio/JACK API)
+        |
+        V
+        PipeWire (использует ALSA, PulseAudio и JACK интерфейсы)
+        |
+        V
+        ALSA (драйверы для звукового оборудования, linux)
+
+    
+    Запуск сервера pipewire
+        systemctl --user enable --now pipewire.service pipewire-pulse.service wireplumber
+
+    Проверка
+        pactl info                              #Если в выводе присутствует pipwire, значит все работает
+
